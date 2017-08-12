@@ -3,6 +3,7 @@
 import pandas as pd
 import sys
 
+#Define the column names that we want to keep
 keep_cols = ['Measure_Date', 
             'Pattern_Date', 'Operating_System', 'Client_Version',
             'Policy_Serial', 'HI_Status', 'Status',
@@ -13,10 +14,20 @@ keep_cols = ['Measure_Date',
             'Firefox_Browser_Protection_On', 'Early_Launch_Antimalware_On',
             'Computer_Name', 'Server_Name', 'MAC_Address1']
 
+#-----------------------------------------------
+#Main
+#
+#Iterate through CSVs passed on the command line
+#and use pandas to keep the columns listed in 
+#keep_cols.
+#-----------------------------------------------
+
+#Check arg count
 if len(sys.argv) == 1:
     print "No args passed"
     quit()
 
+#Loop through CSVs, keep only keep_cols, write to a _pruned.csv file
 for i in sys.argv[1:]:
     f = pd.read_csv(i)
     s = i.split('.')
