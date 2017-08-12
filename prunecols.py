@@ -3,8 +3,8 @@
 import pandas as pd
 import sys
 
-#Define the column names that we want to keep
-keep_cols = ['Measure_Date', 
+#Define the column names that we want to keep and in what order
+keep_cols = ['Computer_Name', 'Measure_Date', 
             'Pattern_Date', 'Operating_System', 'Client_Version',
             'Policy_Serial', 'HI_Status', 'Status',
             'Auto_Protect_On', 'Worst_Detection', 
@@ -12,7 +12,7 @@ keep_cols = ['Measure_Date',
             'Download_Insight_On', 'SONAR_On', 'Tamper_Protection_On',
             'Intrusion_Prevention_On', 'IE_Browser_Protection_On',
             'Firefox_Browser_Protection_On', 'Early_Launch_Antimalware_On',
-            'Computer_Name', 'Server_Name', 'MAC_Address1']
+             'Server_Name', 'MAC_Address1']
 
 #-----------------------------------------------
 #Main
