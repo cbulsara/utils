@@ -13,20 +13,11 @@ acceptable_inputs = ['text', 'keyword', 'long', 'integer',
                         'geo_shape', 'ip', 'completion',
                         'token_count', 'murmur3', 'mapper-attachments']
 
-preamble = """{
-                "mappings": {
-                  "logs": {
-                    "properties": {
-                     "@timestamp": {
-                      "type": "date",
-                      "format": "basic_date"
-                     },
-                     "@version": {
-                       "type": "string"    
-                     },
-"""
-
+#Write preamble and headers + types in a format ingestible by elasticsearch via a curl PUT.
+#An easy way to use this is to copy the contents of the output file, paste it into the Kibana dev tools
+#console, clean it up, append PUT [index name] to the top, and send
 def writeIndex(headers, types):
+    #Append mandatory preamble with timestamp and version
     outbuffer = []
     outbuffer.append("{")
     outbuffer.append("\t" + '"mappings": {')
@@ -39,34 +30,53 @@ def writeIndex(headers, types):
     outbuffer.append("\t\t\t\t\t" + '"type": "string"')
     outbuffer.append("\t\t\t\t" + '},')
 
-
+    #Zip the header and types lists, iterate and append to outbuffer with appropriate formatting.
     for h, t in zip(headers,types):
         outbuffer.append("\t\t\t\t" + '"' + h + '"' + ": {")
         outbuffer.append("\t\t\t\t\t" + '"type":' + ' "' + t + '"')
         outbuffer.append("\t\t\t\t" + "},")
+    #Eliminate the final trailing comma
     outbuffer[-1] = outbuffer[-1].replace(",", "")
-
+    #Append closing braces
     outbuffer.append("\t\t\t" + '}')
     outbuffer.append("\t\t" + '}')
     outbuffer.append("\t" + '}')
     outbuffer.append('}')
 
+    #Write buffer to file
     textfile = open("outbuffer.txt", 'wb')
     for s in outbuffer:
         textfile.write(s + "\n")
     textfile.close()
 
+#------------------------------------------------------
+#Main
+#
+#Iterate through csv files passed on the command line.
+#For each column, poll the user for field type.
+#Call WriteIndex to write headers and field types to
+#a text file in a format ingestible by elasticsearch via
+#a curl PUT. Also write headers out to a CSV file for
+#debug, and also to copy and paste into CONF files.
+#------------------------------------------------------
+
+
+#Argument check
 if len(sys.argv) == 1:
     print "No args passed"
     quit()
 
+#Iterate through CSV files passed on the command line.
 for i in sys.argv[1:]:
-    print preamble
-    headersout = []
-    typesout = []
+    
+    headersout = []                                                     #headers list
+    typesout = []                                                       #field types list
 
+    #Read CSV file and load the first row into the list of headers.
     f = pd.read_csv(i)
     headersout = list(f)
+
+    #For each header, poll user for field types
     print("Please enter the desired data type for each column.")
     print acceptable_inputs
     for h in list(f):
@@ -76,38 +86,18 @@ for i in sys.argv[1:]:
                 column_type = column_type.lower()
             except ValueError:
                 continue
-            if column_type in acceptable_inputs:
+            if column_type in acceptable_inputs:                        #compare user input against list of elasticsearch field types, throw exceptions
                 typesout.append(column_type)
                 break
             else:
                 print("Invalid Entry")
     
-    writeIndex(headersout,typesout)
-    filename =  i.split(".")[0] + "_headers.csv"
-    with open(filename, 'wb') as csvfile:
-        w = csv.writer(csvfile, quoting=csv.QUOTE_ALL, quotechar='"')
+    writeIndex(headersout,typesout)                                     #write headers to file for debug and CONF file use
+    filename =  i.split(".")[0] + "_headers.csv"                        #we have to use csv.writer instead of pandas in order to 
+    with open(filename, 'wb') as csvfile:                               #get field names wrapped in "QUOTES"
+        w = csv.writer(csvfile, quoting=csv.QUOTE_ALL, quotechar='"')   #most ELK CONF files need field names wrapped in quotes
         w.writerow(headersout)
         w.writerow(typesout)
-
-
-
-
-
-
-
-
-
-#    with open(i, 'rb') as csvfile:
-#        c = csv.reader(csvfile)
-#        r = c.next()
-#        headersout.append(r)
-#        print headersout
-        
-# with open("results.csv", 'wb') as csvfile:
-#    w = csv.writer(csvfile, quoting=csv.QUOTE_ALL, quotechar='"')
-#    for r in headersout:
-#        print r
-#        w.writerow(r)
 
 
 
