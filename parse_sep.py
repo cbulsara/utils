@@ -39,12 +39,13 @@ def pruneDate(df):
     df[col].replace('Never', '', inplace=True)                                          ##SEP-specific: Elasticsearch can't handle text in date fields, so replace 'Never' (never scanned) with nothing
     df[col] = df[col].map(lambda x: str(x).split(" ")[0])                               ##SEP-specific: Some date fields in SEPM will be formated MM/DD/YYYY + other junk separated by a space
                                                                                                         #We want to get rid of everything after MM/DD/YYYY using space as delimeter
-def joinCMDB(file_path):
+def joinCMDB(left_frame, right_frame):
     user_input = raw_input("Join with CMDB file [Y/N]: ").upper()
 
     if user_input == "Y":
-        
-
+        df = left_frame.merge(right_frame, how='outer', left_on='Computer_Name', right_on='name', indicator=True)
+    else:
+        print("Not joining.")
 
 #-----------------------------------------, 
 #Main
