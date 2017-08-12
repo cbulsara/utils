@@ -3,7 +3,7 @@ import csv
 import sys
 import pandas as pd
 
-#define acceptable input as elasticsearch field types
+#define acceptable input as elasticsearch field typess
 acceptable_inputs = ['text', 'keyword', 'long', 'integer',
                         'short', 'byte', 'double', 'float',
                         'date', 'boolean', 'binary',
@@ -33,8 +33,7 @@ def writeIndex(headers, types):
     outbuffer.append("\t\t" + '"logs": {')
     outbuffer.append("\t\t\t" + '"properties": {')
     outbuffer.append("\t\t\t\t" + '"@timestamp": {')
-    outbuffer.append("\t\t\t\t\t" + '"type": "date",')
-    outbuffer.append("\t\t\t\t\t" + '"format": "basic_date"')
+    outbuffer.append("\t\t\t\t\t" + '"type": "date"')
     outbuffer.append("\t\t\t\t" + "},")
     outbuffer.append("\t\t\t\t" + '"@version": {')
     outbuffer.append("\t\t\t\t\t" + '"type": "string"')
