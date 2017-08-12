@@ -3,6 +3,7 @@ import csv
 import sys
 import pandas as pd
 
+#define acceptable input as elasticsearch field types
 acceptable_inputs = ['text', 'keyword', 'long', 'integer',
                         'short', 'byte', 'double', 'float',
                         'date', 'boolean', 'binary',
