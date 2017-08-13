@@ -38,6 +38,12 @@ def concatWorkstationsServers(df1, df2):
         print("Not concatenating.")
     return None
 
+def renameColumns(df):
+    for a, b in zip(keep_cols, rename_cols):
+        df.rename(columns={a: b}, inplace=True)
+    
+    return df
+
 #-----------------------------------------, 
 #Main
 #
@@ -61,9 +67,9 @@ df2 = pruneColumns(df2)
 
 df3 = concatWorkstationsServers(df2, df2)
 
-if df3:
+if not (df3 is None):
     newfilename = raw_input("Enter name of output file: ")
     df3.to_csv(newfilename, index=False)
 else:
     df1.to_csv(sys.argv[1] + ".new", index=False)
-    df2.to_csv(sys.argv[1] + ".new", index=False)
+    df2.to_csv(sys.argv[2] + ".new", index=False)
