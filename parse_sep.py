@@ -33,21 +33,24 @@ def addMeasureDate(df):
 
 def pruneColumns(df):
     df = df[keep_cols]
+    return df
 
 def pruneDate(df):
     col = raw_input("Enter name of date column to be pruned down to MM/DD/YYYY: ")
     df[col].replace('Never', '', inplace=True)                                          ##SEP-specific: Elasticsearch can't handle text in date fields, so replace 'Never' (never scanned) with nothing
     df[col] = df[col].map(lambda x: str(x).split(" ")[0])                               ##SEP-specific: Some date fields in SEPM will be formated MM/DD/YYYY + other junk separated by a space
                                                                                                         #We want to get rid of everything after MM/DD/YYYY using space as delimeter
-def joinCMDB(left_frame, right_frame):
+def joinCMDB(left_frame):
     user_input = raw_input("Join with CMDB file [Y/N]: ").upper()
 
     if user_input == "Y":
+        cmdb_path = raw_input("Enter path/filename of CMDB file: ")
+        right_frame = pd.read_csv(cmdb_path)
+
         df = left_frame.merge(right_frame, how='outer', left_on='Computer_Name', right_on='name', indicator=True)
-        return df
     else:
         print("Not joining.")
-        return None
+    return df
 
 #-----------------------------------------, 
 #Main
@@ -68,7 +71,11 @@ for i in sys.argv[1:]:
     
     addMeasureDate(df)
 
-    pruneColumns(df)
+    df = pruneColumns(df)
 
     pruneDate(df)
 
+    df = joinCMDB(df)
+
+    newfilename = raw_input("Enter name of output file: ")
+    df.to_csv(newfilename, index=False)
