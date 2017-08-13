@@ -1,4 +1,19 @@
 #!/usr/bin/python2.7
+
+#---------------------------------------
+#index_utility.py
+#
+# Accepts CSV files bound for 
+# elasticsearch as arguments. For each
+# one, it interrogates the user for
+# field types. It outputs 2 files: a
+# text file with ready-to-paste index
+# specification for use in a curl PUT
+# transaction to build an index, and a
+# CSV file with column names and field 
+# types, useful for pasting into CONF
+# files and the like.
+#---------------------------------------
 import csv
 import sys
 import pandas as pd
