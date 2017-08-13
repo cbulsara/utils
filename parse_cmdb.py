@@ -3,13 +3,9 @@
 #---------------------------------------
 #parse_sep.py
 #
-#Scripting necessary to sanitize and
-#format CSV output from SEPM such that 
-#it is ingestible by Elasticsearch. 
-#Contains SEP-specific stuff, indicated
-#in comments. If using as a template for
-#other parsing functions be sure to take
-#SEP-specific stuff out or modify it.
+#Scripting necessary to sanitize output
+#from SNOW CMDB and prep it for joining 
+#with SEPM and other outputs.
 #---------------------------------------
 
 
@@ -20,13 +16,31 @@ import sys
 keep_cols = ['name', 'u_friendly', 'short_description',
                 'model_id', 'serial_number']
 
+#Define the column names we want to change to
 rename_cols = ['cmdb_name', 'cmdb_friendly', 'cmdb_shortdescription',
                 'cmdb_model_id', 'cmdb_serial']
 
+#----------------------------------------
+#pruneColumns(df)
+#
+#Limit columns in the passed dataframe to
+#those specified in keep_cols. Return
+#pruned dataframe.
+#---------------------------------------- 
 def pruneColumns(df):
     df = df[keep_cols]
     return df
-                                                                                                       #We want to get rid of everything after MM/DD/YYYY using space as delimeter
+                                                                                                       
+
+#-----------------------------------------
+# concatWorkstationsServers(df1, df2)
+# 
+# Concatenate lists of Workstations and
+# Servers out of SNOW CMDB. Assumes same
+# column names in both lists. Returns
+# concatenated dataframe, or None if user
+# decides not to concat.
+#-----------------------------------------                                                                                                       #We want to get rid of everything after MM/DD/YYYY using space as delimeter
 def concatWorkstationsServers(df1, df2):
     user_input = raw_input("Concatenate servers and workstations? [Y/N]: ").upper()
 
@@ -38,6 +52,13 @@ def concatWorkstationsServers(df1, df2):
         print("Not concatenating.")
     return None
 
+#----------------------------------------
+# renameColumns(df)
+# 
+# Rename columns to titles specified in
+# rename_cols. Return dataframe with 
+# renamed columns.
+#----------------------------------------
 def renameColumns(df):
     for a, b in zip(keep_cols, rename_cols):
         df.rename(columns={a: b}, inplace=True)
@@ -66,6 +87,8 @@ df1 = pruneColumns(df1)
 df2 = pruneColumns(df2)
 
 df3 = concatWorkstationsServers(df2, df2)
+
+df3 = renameColumns(df3)
 
 if not (df3 is None):
     newfilename = raw_input("Enter name of output file: ")

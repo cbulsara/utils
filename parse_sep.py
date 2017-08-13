@@ -27,6 +27,8 @@ keep_cols = ['Computer_Name', 'Measure_Date',
             'Firefox_Browser_Protection_On', 'Early_Launch_Antimalware_On',
              'Server_Name', 'MAC_Address1']
 
+#---------------------------------------
+
 def addMeasureDate(df):
     measure_date = raw_input("Enter measurement date as MM/DD/YYYY: ")
     df.insert(0, 'Measure_Date', measure_date)
