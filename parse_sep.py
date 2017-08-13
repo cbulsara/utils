@@ -44,8 +44,10 @@ def joinCMDB(left_frame, right_frame):
 
     if user_input == "Y":
         df = left_frame.merge(right_frame, how='outer', left_on='Computer_Name', right_on='name', indicator=True)
+        return df
     else:
         print("Not joining.")
+        return None
 
 #-----------------------------------------, 
 #Main
